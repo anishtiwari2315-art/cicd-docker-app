@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: default
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  LOG_LEVEL: "info"
+---
+# NOTE: In production, use proper secrets management (AWS Secrets Manager, Vault, etc.)
+# This Secret uses base64 encoded values - NOT real secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: default
+type: Opaque
+data:
+  # base64 encoded values (for demo only)
+  # echo -n 'your-value' | base64
+  JWT_SECRET: Y2hhbmdlbWVpbnByb2R1Y3Rpb24=
+  DB_PASSWORD: Y2hhbmdlbWU=
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cicd-docker-app-pdb
+  namespace: default
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: cicd-docker-app
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cicd-docker-app-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cicd-docker-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
