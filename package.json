@@ -1,0 +1,35 @@
+{
+  "name": "cicd-docker-app",
+  "version": "1.0.0",
+  "description": "CI/CD Pipeline for Dockerised Node.js Microservices | Jenkins + GitHub Actions + Docker + Kubernetes",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watchAll",
+    "lint": "eslint src/"
+  },
+  "keywords": [
+    "devops", "docker", "cicd", "jenkins", "kubernetes", "nodejs", "microservice"
+  ],
+  "author": "Anish Tiwari <anish@devops.in>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.1",
+    "eslint": "^8.43.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": ["src/**/*.js"]
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
